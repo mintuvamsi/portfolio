@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- <style>
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-container input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+        }
+    </style> -->
+</head>
+
+<body>
+    <!-- <h1>Roulette Quiz - Quiz</h1> -->
+    <form action="/quiz" method="post">
+        <div class="input-container">
+            <p>Question: Bet on {{ question[0] }} with {{ question[1] }} chips</p>
+            <p>What's your answer?</p>
+            <input type="text" name="user_answer">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+    <br> <!-- Add line break -->
+    <form action="/show_answers" method="get" target="_blank">
+        <input type="submit" value="Show Answers">
+    </form>
+</body>
+
+</html>

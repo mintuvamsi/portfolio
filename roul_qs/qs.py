@@ -1,35 +1,47 @@
-from flask import Flask, request, jsonify
+# qs.py
+import random
 
-app = Flask(__name__)
+def french_roulette_payout(bet_type, amount):
+    """
+    Calculate the payout for a given bet in French roulette.
 
-# Sample questions about roulette
-roulette_questions = [
-    "What is the origin of Russian roulette?",
-    "How many chambers are typically in a revolver used for Russian roulette?",
-    "Why is playing Russian roulette dangerous?",
-    "What are some alternatives to Russian roulette for entertainment?"
-]
+    Parameters:
+        bet_type (str): Type of bet, should be one of 'straight', 'split', 'street', 'corner', 'six_line',
+                        'dozen', 'column', 'even_odd', 'red_black', 'high_low'.
+        amount (float): Amount of money bet on the given type.
 
-@app.route('/questions', methods=['GET'])
-def get_question():
-    # Check if 'index' parameter is provided in the request
-    question_index = request.args.get('index')
+    Returns:
+        float: Payout amount for the given bet.
+    """
 
-    if question_index is None:
-        return jsonify({"error": "Please provide 'index' parameter."}), 400
-    
-    # Convert 'index' parameter to integer
-    try:
-        question_index = int(question_index)
-    except ValueError:
-        return jsonify({"error": "'index' parameter must be an integer."}), 400
-    
-    # Check if the index is valid
-    if question_index < 0 or question_index >= len(roulette_questions):
-        return jsonify({"error": "Invalid question index."}), 400
-    
-    # Return the question at the specified index
-    return jsonify({"question": roulette_questions[question_index]})
+    payouts = {
+        'straight': 35,  # Betting on a single number
+        'split': 17,     # Betting on two adjacent numbers
+        'street': 11,    # Betting on three numbers in a row
+        'corner': 8,     # Betting on four numbers that form a square
+        'six_line': 5    # Betting on six numbers from two adjacent rows
+    }
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    if bet_type in payouts:
+        return payouts[bet_type] * amount
+    else:
+        return None  # Return None for unsupported bet types
+
+
+payouts = {
+    'straight': 35,  # Betting on a single number
+    'split': 17,     # Betting on two adjacent numbers
+    'street': 11,    # Betting on three numbers in a row
+    'corner': 8,     # Betting on four numbers that form a square
+    'six_line': 5,   # Betting on six numbers from two adjacent rows
+}
+
+
+def generate_question(num_questions=5):
+    questions = []
+    for _ in range(num_questions):
+        bet_type = random.choice(list(payouts.keys()))
+        amount = random.randint(1, 20)
+        correct_answer = french_roulette_payout(bet_type, amount)
+        questions.append((bet_type, amount, correct_answer))
+    return questions

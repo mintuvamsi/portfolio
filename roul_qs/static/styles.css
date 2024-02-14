@@ -1,0 +1,20 @@
+body {
+    background-image: url('/static/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: Arial, sans-serif;
+    color: white; /* Set text color to white */
+    display: flex;
+    justify-content: left; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Set the body height to full viewport height */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    text-align: justify; /* Center text inside body */
+}
+
+/* Force text elements to start on a new line */
+h1, p, label {
+    display: block;
+}
