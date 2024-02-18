@@ -1,19 +1,13 @@
-<!-- templates/index.html -->
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette Quiz</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <h1>Roulette Quiz</h1>
-    <form action="/" method="post">
-        <label for="name">Enter your name:</label>
-        <input type="text" id="name" name="name">
-        <input type="submit" value="Start Quiz">
-    </form>
-</body>
-</html>
+{% block content %}
+    <h1>{% block title %} Books {% endblock %}</h1>
+    {% for book in books %}
+        <div class='book'>
+            <h3>#{{ book[0] }} - {{ book[1] }} BY {{ book[2] }}</h3>
+            <i><p>({{ book[3] }} pages)</p></i>
+            <p class='review'>{{ book[4] }}</p>
+            <i><p>Added {{ book[5] }}</p></i>
+        </div>
+    {% endfor %}
+{% endblock %}

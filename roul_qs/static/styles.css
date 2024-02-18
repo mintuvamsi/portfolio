@@ -6,7 +6,8 @@ body {
     font-family: Arial, sans-serif;
     color: white; /* Set text color to white */
     display: flex;
-    justify-content: left; /* Center horizontally */
+    justify-content: center;
+    /* justify-content: left; Center horizontally */
     align-items: center; /* Center vertically */
     height: 100vh; /* Set the body height to full viewport height */
     margin: 0; /* Remove default margin */

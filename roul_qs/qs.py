@@ -1,5 +1,6 @@
 # qs.py
 import random
+# from app import *
 
 def french_roulette_payout(bet_type, amount):
     """
@@ -37,11 +38,23 @@ payouts = {
 }
 
 
-def generate_question(num_questions=5):
-    questions = []
-    for _ in range(num_questions):
-        bet_type = random.choice(list(payouts.keys()))
-        amount = random.randint(1, 20)
-        correct_answer = french_roulette_payout(bet_type, amount)
-        questions.append((bet_type, amount, correct_answer))
-    return questions
+# Function to generate questions
+def generate_question():
+    payouts = {
+        'straight': 35,  # Betting on a single number
+        'split': 17,     # Betting on two adjacent numbers
+        'street': 11,    # Betting on three numbers in a row
+        'corner': 8,     # Betting on four numbers that form a square
+        'six_line': 5,   # Betting on six numbers from two adjacent rows
+    }
+    bet_type = random.choice(list(payouts.keys()))
+    amount = random.randint(1, 20)
+    correct_answer = payouts[bet_type] * amount
+    return bet_type, amount, correct_answer
+
+
+# Global variables to keep track of score and current question
+correct_answers = 0
+wrong_answers = 0
+current_question = generate_question()
+user_name = None
