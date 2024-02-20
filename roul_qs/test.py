@@ -1,49 +1,44 @@
-import configparser
-import psycopg2,random
+import pandas as pd
+import re
 
-# Read database configuration from db.INI file
-config = configparser.ConfigParser()
-config.read('roul_qs/db.INI')
+# Your DataFrame
+data = {
+    'Text': [
+        'Tue 20 Feb 24', 'Wed 21 Feb 24', 'Thu 22 Feb 24', 'Fri 23 Feb 24',
+        'Sat 24 Feb 24', 'Sun 25 Feb 24', 'Mon 26 Feb 24', 'Tue 27 Feb 24',
+        'Wed 28 Feb 24', 'Thu 29 Feb 24', 'Fri 01 Mar 24', '14-22', 'Off',
+        'Off', '21-05', '18-02', '18-02', '12-20', 'Off', 'Off', '22-06',
+        '18-02', '(HOL-Paid 14:00-22:00)'
+    ]
+}
+df = pd.DataFrame(data)
 
-try:
-    # Connect to the PostgreSQL database
-    conn = psycopg2.connect(
-        host=config['db_connection']['host'],
-        database=config['db_connection']['database'],
-        user=config['db_connection']['user'],
-        password=config['db_connection']['password']
-    )
+# Regular expressions for date and time
+date_pattern = r'(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s\d{2}\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{2}'
+time_pattern = r'\b\d{2}:\d{2}\b'
 
-    # Create a cursor object
-    cur = conn.cursor()
+# Function to extract date and time
+def extract_date(text):
+    date_match = re.search(date_pattern, text)
+    return date_match.group(0) if date_match else None
 
-    # Fetch records from quiz_answers table
-    cur.execute("SELECT id, question, correct_answer, date FROM quiz_answers")
-    quiz_answers = cur.fetchall()
+def extract_time(text):
+    time_match = re.search(time_pattern, text)
+    return time_match.group(0) if time_match else None
 
-    # Fetch user IDs from users table
-    cur.execute("SELECT id FROM users")
-    user_ids = [row[0] for row in cur.fetchall()]
+# Extracting date and time
+df['Date'] = df['Text'].apply(extract_date)
+df['Time'] = df['Text'].apply(extract_time)
+print(df)
 
-    # Sync records to UserQuizMapping table
-    for quiz_answer in quiz_answers:
-        quiz_answer_id, question, correct_answer, date = quiz_answer
-        # Randomly select a user ID from the list
-        random_user_id = random.choice(user_ids)
-        # Insert into UserQuizMapping table
-        cur.execute("INSERT INTO UserQuizMapping (user_id, question_id, correct_answer, date) VALUES (%s, %s, %s, %s)",
-                    (random_user_id, quiz_answer_id, correct_answer, date))
+# Assigning values from rows 11 to 22 to the 'Time' column
+df['Time'] = df['Time'].fillna(df['Text'].iloc[11:23].values)
 
-    # Commit the transaction
-    conn.commit()
-    print("Syncing completed successfully.")
+# Dropping rows 11 to 22
+df = df.drop(df.index[11:23])
 
-except psycopg2.Error as e:
-    print("Error connecting to PostgreSQL:", e)
+# Resetting index
+df.reset_index(drop=True, inplace=True)
 
-finally:
-    # Close the cursor and connection
-    if cur:
-        cur.close()
-    if conn:
-        conn.close()
+# Displaying the modified DataFrame
+print(df)

@@ -81,6 +81,7 @@ def populate_user_dropdown(dummy_input):
      Input('date-range-picker', 'start_date'),
      Input('date-range-picker', 'end_date')]
 )
+
 def update_graph(dummy_input, user_id, correct_answers_range, start_date, end_date):
     conn = get_db_connection()
     cur = conn.cursor()
