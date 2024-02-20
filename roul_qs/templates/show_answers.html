@@ -1,16 +1,15 @@
 <!-- templates/show_answers.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roulette Quiz - Answers</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='answers_styles.css') }}">
 </head>
 <body>
     <h1>Roulette Quiz - Answers</h1>
-    <p>Name: {{ name }}</p>
+    <p>Username: {{ username }}</p> <!-- Updated line -->
     <p>Correct Answers: {{ correct }}</p>
     <p>Wrong Answers: {{ wrong }}</p>
 </body>
