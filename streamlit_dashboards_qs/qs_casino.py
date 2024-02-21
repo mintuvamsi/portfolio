@@ -1,3 +1,4 @@
+# streamlit_dashboards_qs/qs_casino.py
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -42,7 +43,7 @@ def fetch_count_by_bet_type():
         return None
 
 # Main function to run the Streamlit app
-def main():
+def qs_casino_main():
     st.title("Data Visualization and Display from PostgreSQL Database")
 
     # Fetch data from the database
@@ -92,4 +93,4 @@ def main():
         st.error("Failed to fetch data from the database. Please check your database connection.")
 
 if __name__ == "__main__":
-    main()
+    qs_casino_main()

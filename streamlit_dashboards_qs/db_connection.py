@@ -5,7 +5,6 @@ def get_db_connection():
     # Read database configuration from .INI file
     config = ConfigParser()
     config.read('db.INI')  # Adjust the file path if necessary
-
     # Get database connection parameters
     db_params = {
         'host': config['db_connection']['host'],

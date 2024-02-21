@@ -141,17 +141,142 @@
 -- ALTER TABLE employees
 -- DROP COLUMN hire_date;
 
--- Drop foreign key constraints if they exist
-ALTER TABLE live_tables DROP CONSTRAINT IF EXISTS fk_inspector_employee;
-ALTER TABLE live_tables DROP CONSTRAINT IF EXISTS fk_dealer_employee;
+-- -- Drop foreign key constraints if they exist
+-- ALTER TABLE live_tables DROP CONSTRAINT IF EXISTS fk_inspector_employee;
+-- ALTER TABLE live_tables DROP CONSTRAINT IF EXISTS fk_dealer_employee;
 
--- Create foreign key constraints for inspector_id and dealer_id
-ALTER TABLE live_tables
-ADD CONSTRAINT fk_inspector_employee
-FOREIGN KEY (inspector_id)
-REFERENCES employees(employee_id);
+-- -- Create foreign key constraints for inspector_id and dealer_id
+-- ALTER TABLE live_tables
+-- ADD CONSTRAINT fk_inspector_employee
+-- FOREIGN KEY (inspector_id)
+-- REFERENCES employees(employee_id);
 
-ALTER TABLE live_tables
-ADD CONSTRAINT fk_dealer_employee
-FOREIGN KEY (dealer_id)
-REFERENCES employees(employee_id);
+-- ALTER TABLE live_tables
+-- ADD CONSTRAINT fk_dealer_employee
+-- FOREIGN KEY (dealer_id)
+-- REFERENCES employees(employee_id);
+
+-- SELECT column_name, is_nullable
+-- FROM information_schema.columns
+-- WHERE table_name = 'live_tables' AND column_name = 'table_id';
+
+
+-- SELECT column_name, column_default, is_identity, ordinal_position
+-- FROM information_schema.columns
+-- WHERE table_name = 'live_tables' AND column_name = 'table_id';
+
+
+-- UPDATE live_tables
+-- SET table_id = (SELECT gt.table_id
+--                 FROM game_tables gt
+--                 OFFSET floor(random() * (SELECT count(*) FROM game_tables))
+--                 LIMIT 1)
+-- WHERE table_id IS NULL;
+
+
+-- -- Find records in live_tables that violate the foreign key constraint
+-- SELECT * 
+-- FROM live_tables lt
+-- WHERE NOT EXISTS (
+--     SELECT 1 
+--     FROM game_tables gt 
+--     WHERE lt.table_id = gt.table_id 
+--       AND lt.game_type = gt.game_type 
+--       AND lt.table_number = gt.table_number
+-- );
+
+-- -- Update live_tables to reference existing records in game_tables
+-- UPDATE live_tables lt
+-- SET table_id = (
+--     SELECT table_id 
+--     FROM game_tables gt 
+--     WHERE lt.game_type = gt.game_type 
+--       AND lt.table_number = gt.table_number
+-- )
+-- WHERE NOT EXISTS (
+--     SELECT 1 
+--     FROM game_tables gt 
+--     WHERE lt.game_type = gt.game_type 
+--       AND lt.table_number = gt.table_number
+-- );
+
+
+
+-- -- Update records in live_tables with random game_type values where game_type is null
+-- UPDATE live_tables
+-- SET game_type = (
+--     SELECT game_type
+--     FROM (
+--         SELECT DISTINCT game_type FROM live_tables WHERE game_type IS NOT NULL
+--     ) AS subquery
+--     ORDER BY random()
+--     LIMIT 1
+-- )
+-- WHERE game_type IS NULL;
+
+
+-- SELECT
+--     tc.constraint_name,
+--     tc.table_name,
+--     kcu.column_name,
+--     ccu.table_name AS foreign_table_name,
+--     ccu.column_name AS foreign_column_name
+-- FROM
+--     information_schema.table_constraints AS tc
+--     JOIN information_schema.key_column_usage AS kcu
+--       ON tc.constraint_name = kcu.constraint_name
+--     JOIN information_schema.constraint_column_usage AS ccu
+--       ON ccu.constraint_name = tc.constraint_name
+-- WHERE
+--     constraint_type = 'FOREIGN KEY' AND
+--     kcu.table_name = 'live_tables' AND
+--     kcu.column_name = 'table_number';
+
+
+-- UPDATE live_tables AS lt
+-- SET table_number = gt.table_id
+-- FROM game_tables AS gt
+-- WHERE lt.table_number = gt.table_id;
+
+-- UPDATE live_tables AS lt
+-- SET table_id = gt.table_id
+-- FROM (
+--     SELECT table_id, game_type, table_number
+--     FROM game_tables
+-- ) AS gt
+-- WHERE lt.game_type = gt.game_type
+-- AND lt.table_number = gt.table_number;
+
+
+-- ALTER TABLE customers
+-- ADD COLUMN table_id INT REFERENCES game_tables(table_id);
+
+
+-- UPDATE customers
+-- SET table_id = (1 + floor(random() * 30))
+-- WHERE table_id BETWEEN 1 AND 30;
+
+
+-- ALTER TABLE customers 
+-- ALTER COLUMN table_id SET DEFAULT NULL, 
+-- ADD COLUMN table_id_temp INTEGER,
+-- ALTER COLUMN table_id_temp SET DEFAULT NULL;
+
+-- UPDATE customers 
+-- SET table_id_temp = table_id;
+
+-- ALTER TABLE customers 
+-- DROP COLUMN table_id,
+-- ADD COLUMN table_id INTEGER,
+-- ALTER COLUMN table_id SET DEFAULT NULL;
+
+-- UPDATE customers 
+-- SET table_id = table_id_temp;
+
+-- ALTER TABLE customers 
+-- DROP COLUMN table_id_temp;
+
+-- UPDATE customers AS c
+-- SET membership_type = m.membership_name
+-- FROM memberships AS m
+-- WHERE c.membership_type = m.membership_id::varchar;
