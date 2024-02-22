@@ -1,0 +1,8 @@
+langchain
+pandasai
+python-dotenv
+streamlit
+
+
+
+

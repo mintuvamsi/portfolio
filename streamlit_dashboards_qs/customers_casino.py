@@ -4,6 +4,7 @@ import pandas as pd
 from db_connection import get_db_connection
 from datetime import datetime
 import streamlit as st
+import pandas as pd
 
 def calculate_age(birth_date):
     today = datetime.today()
@@ -14,8 +15,6 @@ def fetch_all_customers_data(page_no, page_size, filters=None):
     connection = get_db_connection()
     if connection:
         cursor = connection.cursor()
-        
-
         # Construct the WHERE clause for filtering
         where_clause = ""
         if filters:
@@ -39,6 +38,10 @@ def fetch_all_customers_data(page_no, page_size, filters=None):
                     elif key == "gender":
                         if value in ["Male", "Female", "Other"]:
                             where_conditions.append(f"{key} = '{value}'")
+                    # elif key == "start_date":
+                    #     where_conditions.append(f"timestamp >= '{value}'")
+                    # elif key == "end_date":
+                    #     where_conditions.append(f"timestamp <= '{value}'")
                     else:
                         if isinstance(value, str):
                             where_conditions.append(f"{key} LIKE '%{value}%'")
@@ -151,6 +154,5 @@ def customers_data():
     else:
         st.error(
             "Failed to load customer data. Please check your database connection.")
-
 
 

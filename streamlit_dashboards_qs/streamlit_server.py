@@ -1,6 +1,15 @@
+# streamlit_server.py
+
 import streamlit as st
 from customers_casino import customers_data
+from streamlit_pandas_profiling import st_profile_report
+import ydata_profiling as yp
+import pandas as pd
+from openai import OpenAI
 
+# Initialize OpenAI client
+global client
+client = OpenAI(api_key='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')
 
 def home():
     st.title(":sunglasses: :blue[Customer Information]")
@@ -30,24 +39,52 @@ def home():
                  </div>
                 ''', unsafe_allow_html=True)
 
+def customers_data_page():
+    st.title(":bar_chart: :blue[EDA Analysis]")
+    st.write("Perform Exploratory Data Analysis (EDA) here.")
+
+    # File upload
+    uploaded_file = st.file_uploader(label='Upload a CSV file', type=['csv'])
+
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+        st.dataframe(df, use_container_width=True)
+
+        if st.button('Perform EDA Analysis'):
+            profile_report = yp.ProfileReport(df)
+            st_profile_report(profile_report)
+
+    # Chat functionality
+    st.sidebar.title("Chat")
+    chat_input = st.sidebar.text_input("Say something:")
+    if chat_input:
+        chatbot_response = get_chat_response(chat_input)
+        st.sidebar.write("Assistant: " + chatbot_response)
 
 def main():
     if "selected_page" not in st.session_state:
         st.session_state.selected_page = "Home"
-    elif "page_number" not in st.session_state:
-        st.session_state.page_number = 1
 
     # Sidebar for navigation
     st.sidebar.title("Navigation")
     selected_page = st.sidebar.selectbox(
-        "Go to", ("Home", "Customer Data"), index=["Home", "Customer Data"].index(st.session_state.selected_page))
+        "Go to", ("Home", "Customer Data", "EDA Analysis"), index=["Home", "Customer Data", "EDA Analysis"].index(st.session_state.selected_page))
     st.session_state.selected_page = selected_page
+
     if selected_page == "Home":
         home()
     elif selected_page == "Customer Data":
-        with st.container():
-            customers_data()
+        customers_data()
+    elif selected_page == "EDA Analysis":
+        customers_data_page()
 
+def get_chat_response(input_text):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "system", "content": input_text}]
+    )
+    message = response.choices[0].message.content
+    return message
 
 if __name__ == "__main__":
     main()
