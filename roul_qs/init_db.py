@@ -3,7 +3,7 @@ import psycopg2
 
 conn = psycopg2.connect(
         host="localhost",
-        database="flask_db",
+        database="casino",
         user='sammy',
         password='password')
 

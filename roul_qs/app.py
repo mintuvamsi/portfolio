@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, url_for
 import psycopg2
 from qs import *
 import configparser
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from datetime import datetime
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -45,6 +45,7 @@ def create_quiz_answers_table():
     conn.commit()
     cur.close()
     conn.close()
+    return "Quiz answers Table Created"
 
 
 create_quiz_answers_table()
@@ -114,14 +115,11 @@ def authenticate_user(username, password):
     user = cur.fetchone()
     cur.close()
     conn.close()
-    return (user[1], user[2])
-    # if check_password_hash(user[2], password):
-    # print(username, user[1])
-    # if user[1] and username or user[2] and password is True:
-    #     print("Fetched user from database:", user[2])  # Debugging print statement
-    #     return True
-    # else:
-    #     return False
+    
+    if user is not None:  # Check if user exists
+        return (user[1], user[2])  # Return username and hashed password
+    else:
+        return None  # User not found, return None
 
 
 # Function to register a new user
@@ -188,4 +186,5 @@ def quiz():
 
 
 if __name__ == '__main__':
+    create_quiz_answers_table()
     app.run(debug=True)
