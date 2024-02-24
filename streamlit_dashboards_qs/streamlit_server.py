@@ -1,22 +1,71 @@
 # streamlit_server.py
-
+import base64
 import streamlit as st
 from customers_casino import customers_data
 from streamlit_pandas_profiling import st_profile_report
 import ydata_profiling as yp
 import pandas as pd
 from openai import OpenAI
+import streamlit.components.v1 as compo
 
 # Initialize OpenAI client
 global client
-client = OpenAI(api_key='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')
+client = OpenAI(api_key='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')
+
+# Function to get base64 encoded string
+def get_base64(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Function to set background
+def set_background(png_file):
+    bin_str = get_base64(png_file)
+    page_bg_img = f'''
+    <style>
+    .stApp {{
+    background-image: url("data:image/png;base64,{bin_str}");
+    background-size: cover;
+    }}
+    img {{
+    opacity: 0.5
+    }}
+    </style>
+    '''
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+
+# set_background('data_files/background.jpg')
 
 def home():
+    
+    # Define the HTML code for the Lottie animations
+    html_code = '''
+    <div style="display: flex; align-items: center; justify-content: space-around;">
+        <div style="margin-right: 20px;">
+            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+            <lottie-player src="https://lottie.host/cedc1377-595d-4379-9e75-40b40f0ab79d/wNcoPaIEt8.json" background="#fff" speed="1" style="width: 300px; height: 300px" loop controls autoplay direction="1" mode="normal"></lottie-player>
+        </div>
+        <div>
+            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+            <lottie-player src="https://lottie.host/21e28a91-010d-405c-b107-5ce52330ed5f/Fs8nmhURkV.json" background="#fff" speed="1" style="width: 300px; height: 300px" loop controls autoplay direction="1" mode="normal"></lottie-player>
+        </div>
+    </div>
+    '''
+
+    # Render the HTML code for the Lottie animations
+    compo.html(html_code, width=800, height=400)
+
+    # Display the title and introductory text
     st.title(":sunglasses: :blue[Customer Information]")
-    st.write("Welcome to the Customer Information App!")
-    # Show the essay
+    st.write(" :blue[Welcome to the Customer Information App!]")
+
+    # Render the HTML code
+    # compo.html(html_code)
+
+    # Display the essay
     st.markdown('''
-                <div style="text-align: justify;">
+                <div style="text-align: justify;  color: white;">
+                <br>
                 In today's dynamic business landscape, understanding customer behavior is paramount for success. 
                 Web-based analytical applications provide a powerful platform for businesses to gain insights into customer preferences, behaviors, and trends. 
                 By leveraging advanced analytics and interactive visualizations, these applications enable businesses to analyze vast amounts of customer data efficiently. 
@@ -36,7 +85,7 @@ def home():
                 By providing accessible, real-time insights into customer behavior, preferences, and trends, these applications empower businesses to make data-driven decisions that ultimately lead to improved customer satisfaction, loyalty, and profitability.        
                 This app allows you to search for a customer by their name or ID and view their information. 
                 This app allows you to explore the customer information of a casino. 
-                 </div>
+                </div>
                 ''', unsafe_allow_html=True)
 
 def customers_data_page():
@@ -54,12 +103,12 @@ def customers_data_page():
             profile_report = yp.ProfileReport(df)
             st_profile_report(profile_report)
 
-    # Chat functionality
-    st.sidebar.title("Chat")
-    chat_input = st.sidebar.text_input("Say something:")
-    if chat_input:
-        chatbot_response = get_chat_response(chat_input)
-        st.sidebar.write("Assistant: " + chatbot_response)
+        # Chat functionality
+        st.sidebar.title("Chat")
+        chat_input = st.sidebar.text_input("Say something:")
+        if chat_input:
+            chatbot_response = get_chat_response(chat_input)
+            st.sidebar.write("Assistant: " + chatbot_response)
 
 def main():
     if "selected_page" not in st.session_state:

@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 config = configparser.ConfigParser()
-config.read('roul_qs/db.INI')
+config.read('db.INI')
 
 # Function to establish a database connection
 
