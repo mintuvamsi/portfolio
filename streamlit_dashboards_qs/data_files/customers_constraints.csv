@@ -1,0 +1,2 @@
+"constraint_name","constraint_type","column_name","foreign_table_name","foreign_column_name"
+"customers_pkey","PRIMARY KEY","customer_id","customers","customer_id"

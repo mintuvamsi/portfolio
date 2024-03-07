@@ -81,7 +81,7 @@ def customers_data():
         st.session_state.selected_page = "Customer Data"
 
     # Define page size
-    page_size = 100
+    page_size = 1000
 
     # Initialize filters
     if "filters" not in st.session_state:
@@ -126,7 +126,7 @@ def customers_data():
             st.session_state.filters.pop("max_age", None)
 
         # Get filter for gender
-        gender = st.radio("Gender", ["", "Male", "Female", "Other"])
+        gender = st.multiselect("Gender", ["", "Male", "Female", "Other"])
         if gender:
             st.session_state.filters["gender"] = gender
         else:
@@ -200,6 +200,13 @@ def customers_data():
             unsafe_allow_html=True
         )
         st.dataframe(df)
+        # Display pagination controls
+        if st.session_state.page_number > 1:
+            if st.button("Previous Page"):
+                st.session_state.page_number -= 1
+        if len(df) == page_size:
+            if st.button("Next Page"):
+                st.session_state.page_number += 1
 
         try:
             # Gender Distribution bar chart
@@ -236,13 +243,7 @@ def customers_data():
             print(e)
 
 
-        # Display pagination controls
-        if st.session_state.page_number > 1:
-            if st.button("Previous Page"):
-                st.session_state.page_number -= 1
-        if len(df) == page_size:
-            if st.button("Next Page"):
-                st.session_state.page_number += 1
+        
     else:
         st.error("Failed to load customer data. Please check your database connection.")
     
